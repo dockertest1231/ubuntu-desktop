@@ -1,115 +1,13 @@
-#cloud-config
-interactive-sections:
- - identity
 autoinstall:
-  apt:
-    disable_components: []
-    geoip: true
-    preserve_sources_list: false
-    primary:
-    - arches:
-      - amd64
-      - i386
-      uri: http://us.archive.ubuntu.com/ubuntu
-    - arches:
-      - default
-      uri: http://ports.ubuntu.com/ubuntu-ports
-  drivers:
-    install: false
+  version: 1
+  #interactive-sections:
+  #  - identity
+  ssh:
+    install-server: true
   identity:
     hostname: hostname
-    password: password
-    username: username
-  kernel:
-    package: linux-generic
-  keyboard:
-    layout: us
-    toggle: null
-    variant: ''
-  locale: en_US.UTF-8
-  network:
-    ethernets:
-      ens18:
-        critical: true
-        dhcp-identifier: mac
-        dhcp4: true
-        nameservers:
-          addresses:
-          - 1.1.1.1
-          search:
-          - domain.value
-    version: 2
-  ssh:
-    allow-pw: true
-    authorized-keys: []
-    install-server: true
-  storage:
-    config:
-    - ptable: gpt
-      serial: 0QEMU_QEMU_HARDDISK_drive-scsi0
-      path: /dev/sda
-      wipe: superblock
-      preserve: false
-      name: ''
-      grub_device: true
-      type: disk
-      id: disk-sda
-    - device: disk-sda
-      size: 1048576
-      flag: bios_grub
-      number: 1
-      preserve: false
-      grub_device: false
-      type: partition
-      id: partition-0
-    - device: disk-sda
-      size: 2147483648
-      wipe: superblock
-      flag: ''
-      number: 2
-      preserve: false
-      grub_device: false
-      type: partition
-      id: partition-1
-    - fstype: ext4
-      volume: partition-1
-      preserve: false
-      type: format
-      id: format-0
-    - device: disk-sda
-      size: 32209108992
-      wipe: superblock
-      flag: ''
-      number: 3
-      preserve: false
-      grub_device: false
-      type: partition
-      id: partition-2
-    - name: ubuntu-vg
-      devices:
-      - partition-2
-      preserve: false
-      type: lvm_volgroup
-      id: lvm_volgroup-0
-    - name: ubuntu-lv
-      volgroup: lvm_volgroup-0
-      size: 16101933056B
-      wipe: superblock
-      preserve: false
-      type: lvm_partition
-      id: lvm_partition-0
-    - fstype: ext4
-      volume: lvm_partition-0
-      preserve: false
-      type: format
-      id: format-1
-    - path: /
-      device: format-1
-      type: mount
-      id: mount-1
-    - path: /boot
-      device: format-0
-      type: mount
-      id: mount-0
-  updates: security
-  version: 1
+    username: user
+    password: "$6:$##########"
+  late-commands:
+    - curl -L https://bootstrap.saltproject.io -o /target/tmp/salt-bootstrap.sh
+    - curtin in-target --target=/target -- bash /tmp/salt-bootstrap.sh -A salt-master -X
