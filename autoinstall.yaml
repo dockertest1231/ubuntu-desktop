@@ -7,7 +7,7 @@ autoinstall:
   identity:
     hostname: hostname
     username: user
-    password: "$6:$##########"
+    password: "welcome123"
   late-commands:
     - curl -L https://bootstrap.saltproject.io -o /target/tmp/salt-bootstrap.sh
     - curtin in-target --target=/target -- bash /tmp/salt-bootstrap.sh -A salt-master -X
